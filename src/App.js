@@ -1,25 +1,159 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import axios from "axios";
+import NavBar from "./NavBar";
+import BookList from "./BookList";
+import Cart from "./Cart";
+import AdminCheckbox from "./AdminCheckbox";
+
+import "bulma/css/bulma.css";
+import "./App.css";
 
 class App extends Component {
+    constructor(props) {
+      super(props);
+
+      this.state = {
+        books: [],
+        admin: false,
+        editId: 3
+      };
+    }
+
+    async getBooks() {
+
+      try {
+        const response = await axios.get("http://localhost:8082/api/books");
+
+        this.setState({ books: response.data });
+        console.log(response.data);
+
+
+      } catch(err) {
+        console.log(err);
+      }
+  }
+
+  async addToCart(id) {
+    await axios.patch("http://localhost:8082/api/books/cart/add/" + id);
+
+    this.getBooks();
+  }
+
+  async removeFromCart(id) {
+    await axios.patch("http://localhost:8082/api/books/cart/remove/" + id);
+
+    this.getBooks();
+  }
+
+  removeBook = async (id) => {
+    await axios.delete("http://localhost:8082/api/books/" + id);
+
+    this.getBooks();
+  }
+
+  toggleAdminHandler = _e => {
+    const admin = !this.state.admin;
+
+    this.setState({ admin });
+  }
+
+  sortBy = (field) => {
+    const sortedBooks = this.state.books.slice().sort((book1, book2) => {
+      if (book1[field] === book2[field]) {
+        return 0;
+
+      } else {
+        return book1[field] > book2[field];
+      }
+    })
+
+    this.setState({ books: sortedBooks });
+  }
+
+  formSubmitHandler = async (values) => {
+    console.log(values)
+    const response = await axios.post("http://localhost:8082/api/books", values);
+    console.log(response);
+
+    this.getBooks();
+  }
+
+  toggleCart = async (id) => {
+    const book = this.state.books.find(book => book.id === id);
+
+    console.log(book);
+
+    if (!book.inCart) {
+      this.addToCart(id);
+
+    } else {
+      this.removeFromCart(id);
+    }
+  }
+
+  componentDidMount() {
+    this.getBooks();
+  }
+
+
+  formChangeHandler(field, value) {
+    console.log(value);
+    const newInputs = { ...this.state.inputs };
+    newInputs[field] = value;
+    console.log(newInputs);
+
+    this.setState({ inputs: { ...newInputs }});
+  }
+
+  updateEditHandler = (id) => {
+    this.setState({ editId : id })
+  }
+
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+        <NavBar />
+        <div className="section">
+          <div className="container">
+            <div className="tile is-ancestor is-vertical">
+              <div className="tile is-parent">
+                <AdminCheckbox
+                  toggleAdminHandler={ this.toggleAdminHandler }
+                  admin={ this.state.admin }
+                />
+              </div>
+              <div className="tile is-parent">
+                <div className="tile is-parent">
+                  <article className="tile">
+                    <BookList
+                      books={ this.state.books }
+                      toggleCart={ this.toggleCart }
+                      formSubmitHandler={ this.formSubmitHandler }
+                      formChangeHandler={ this.formChangeHandler }
+                      updateEditHandler={ this.updateEditHandler }
+                      removeBook={ this.removeBook }
+                      sortBy={this.sortBy}
+                      editId={ this.state.editId }
+                      admin={ this.state.admin }
+                    />
+                  </article>
+                </div>
+                {
+                  this.state.admin ? "" :
+                  <div className="tile is-parent is-4">
+                    <article className="tile">
+                      <Cart
+                        books={ this.state.books }
+                        toggleCart={ this.toggleCart }
+                        admin={ this.state.admin }
+                      />
+                    </article>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
