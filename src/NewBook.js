@@ -8,10 +8,10 @@ class NewBook extends Component {
     this.formSubmitHandler = formSubmitHandler;
     this.state = {
       inputs: {
-        "title": "",
-        "author": "",
-        "publisher": "",
-        "price": ""
+        title:      { name: "title", type: "text", value: "" },
+        author:     { name: "author", type: "text", value: "" },
+        publisher:  { name: "publisher", type: "text", value: "" },
+        price:      { name: "price", type: "number", value: "" }
       }
     }
   }
@@ -21,13 +21,13 @@ class NewBook extends Component {
     return (
         <tr>
           {
-            fields.map(field =>
-              <td key={ field }>
+            fields.map((field, index) =>
+              <td key={ index }>
                 <input
                   className="input"
-                  type={ field === "price" ? "number" : "text" }
+                  type={ this.state.inputs[field].type }
                   placeholder={ field }
-                  value={ this.state[field] }
+                  value={ this.state.inputs[field].value }
                   onChange={
                     e => this.formChangeHandler(field, e.target.value)
                   }
@@ -37,7 +37,22 @@ class NewBook extends Component {
           }
           <td colSpan="2">
             <button className="button" onClick={
-              _e => this.formSubmitHandler(this.state.inputs)
+              _e => {
+                this.formSubmitHandler(fields.reduce((acc, field) => {
+                  acc[field] = this.state.inputs[field].value;
+                  return acc;
+                }, {}));
+
+                this.setState(
+                  {
+                    inputs: {
+                      title:      { name: "title", type: "text", value: "" },
+                      author:     { name: "author", type: "text", value: "" },
+                      publisher:  { name: "publisher", type: "text", value: "" },
+                      price:      { name: "price", type: "number", value: "" }
+                    }
+                  });
+              }
             }>submit</button>
           </td>
         </tr>

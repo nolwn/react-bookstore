@@ -1,6 +1,6 @@
 import React from "react";
 
-const Book = ({ id, title, author, publisher, price, inCart, toggleCart, removeBook, editId, admin }) =>
+const Book = ({ id, title, author, publisher, price, inCart, toggleCart, removeBook, updateEditHandler, editId, admin }) =>
   <tr>
     <td>{ title }</td>
     <td>{ author }</td>
@@ -9,12 +9,15 @@ const Book = ({ id, title, author, publisher, price, inCart, toggleCart, removeB
     {
       admin ?
         editId !== null ? // 👹 Please forgive me!
-          [ <td />, <td /> ] :
+          [ <td key="1" />, <td key="2" /> ] :
           [
-            <td>
-              <button className="button">Edit</button>
+            <td key="1">
+              <button
+                onClick={ _e => updateEditHandler(id) }
+                className="button"
+                >Edit</button>
             </td>,
-            <td>
+            <td key="2">
               <button className="button" onClick={ _e => removeBook(id) }>Delete</button>
             </td>
           ]

@@ -7,7 +7,7 @@ class SearchBar extends Component {
         <p className="control has-icons-left">
           <input
             className="input"
-            type="password"
+            type="text"
             placeholder="Search"
           />
           <span className="icon is-small is-left">

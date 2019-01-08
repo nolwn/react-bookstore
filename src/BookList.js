@@ -3,17 +3,28 @@ import Book from "./Book";
 import NewBook from "./NewBook";
 import EditBook from "./EditBook";
 
-const BookList = ({ books, toggleCart, sortBy, formSubmitHandler, formChangeHandler, removeBook, updateEditHandler, editId, admin }) => {
+const BookList = ({ books, toggleCart, sortBy, formSubmitHandler, formChangeHandler, removeBook, updateEditHandler, submitUpdateHandler, editId, admin }) => {
   return (
     <div>
       <h1 className="title">Books</h1>
       <table className="table">
         <thead>
           <tr>
-            <td><a onClick={ e => sortBy("title") }>Title</a></td>
-            <td><a onClick={ e => sortBy("author") }>Author</a></td>
-            <td><a onClick={ e => sortBy("publisher") }>Publisher</a></td>
-            <td><a onClick={ e => sortBy("price") }>Price</a></td>
+            <td><button
+              type="button"
+              className="link-button"
+              onClick={ e => sortBy("title") }>Title</button></td>
+            <td><button
+              type="button"
+              className="link-button"
+              onClick={ e => sortBy("author") }>Author</button></td>
+            <td><button
+              type="button"
+              className="link-button"
+              onClick={ e => sortBy("publisher") }>Publisher</button></td>
+            <td><button
+              type="button"
+              className="link-button"onClick={ e => sortBy("price") }>Price</button></td>
             {
               admin ?
               <td colSpan="2">Admin Tools</td> :
@@ -33,6 +44,7 @@ const BookList = ({ books, toggleCart, sortBy, formSubmitHandler, formChangeHand
               admin && book.id === editId ?
               <EditBook
                 key={ book.id }
+                id={ book.id }
                 inputs={{
                   title: book.title,
                   author: book.author,
@@ -41,6 +53,7 @@ const BookList = ({ books, toggleCart, sortBy, formSubmitHandler, formChangeHand
                 }}
                 formChangeHandler={ formChangeHandler }
                 updateEditHandler={ updateEditHandler }
+                submitUpdateHandler={ submitUpdateHandler }
               />
               :
               <Book

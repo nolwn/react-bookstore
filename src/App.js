@@ -15,7 +15,7 @@ class App extends Component {
       this.state = {
         books: [],
         admin: false,
-        editId: 3
+        editId: null
       };
     }
 
@@ -25,11 +25,10 @@ class App extends Component {
         const response = await axios.get("http://localhost:8082/api/books");
 
         this.setState({ books: response.data });
-        console.log(response.data);
 
 
       } catch(err) {
-        console.log(err);
+        console.error(err);
       }
   }
 
@@ -67,21 +66,18 @@ class App extends Component {
       }
     })
 
-    this.setState({ books: sortedBooks });
+    this.setState({ books: sortedBooks, editId: null });
   }
 
   formSubmitHandler = async (values) => {
     console.log(values)
     const response = await axios.post("http://localhost:8082/api/books", values);
-    console.log(response);
 
     this.getBooks();
   }
 
   toggleCart = async (id) => {
     const book = this.state.books.find(book => book.id === id);
-
-    console.log(book);
 
     if (!book.inCart) {
       this.addToCart(id);
@@ -97,16 +93,27 @@ class App extends Component {
 
 
   formChangeHandler(field, value) {
-    console.log(value);
     const newInputs = { ...this.state.inputs };
-    newInputs[field] = value;
     console.log(newInputs);
+    newInputs[field].value = value;
 
     this.setState({ inputs: { ...newInputs }});
   }
 
   updateEditHandler = (id) => {
-    this.setState({ editId : id })
+    if (!id) {
+      this.setState({ editId : null });
+
+    } else {
+      this.setState({ editId : id })
+    }
+  }
+
+  submitUpdateHandler = async (id, values) => {
+    const response = await axios.put("http://localhost:8082/api/books/" + id, values);
+    await this.getBooks()
+    this.updateEditHandler(null);
+    this.getBooks();
   }
 
   render() {
@@ -131,6 +138,7 @@ class App extends Component {
                       formSubmitHandler={ this.formSubmitHandler }
                       formChangeHandler={ this.formChangeHandler }
                       updateEditHandler={ this.updateEditHandler }
+                      submitUpdateHandler = { this.submitUpdateHandler }
                       removeBook={ this.removeBook }
                       sortBy={this.sortBy}
                       editId={ this.state.editId }
