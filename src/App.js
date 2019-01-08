@@ -8,6 +8,10 @@ import AdminCheckbox from "./AdminCheckbox";
 import "bulma/css/bulma.css";
 import "./App.css";
 
+const server = process.env.NODE_ENV === "production" ?
+  "https://collective-api-nolwn.herokuapp.com" :
+  "http://localhost:8082"
+
 class App extends Component {
     constructor(props) {
       super(props);
@@ -22,7 +26,7 @@ class App extends Component {
     async getBooks() {
 
       try {
-        const response = await axios.get("http://localhost:8082/api/books");
+        const response = await axios.get(server + "/api/books");
 
         this.setState({ books: response.data });
 
@@ -33,19 +37,19 @@ class App extends Component {
   }
 
   async addToCart(id) {
-    await axios.patch("http://localhost:8082/api/books/cart/add/" + id);
+    await axios.patch(server + "/api/books/cart/add/" + id);
 
     this.getBooks();
   }
 
   async removeFromCart(id) {
-    await axios.patch("http://localhost:8082/api/books/cart/remove/" + id);
+    await axios.patch(server + "/api/books/cart/remove/" + id);
 
     this.getBooks();
   }
 
   removeBook = async (id) => {
-    await axios.delete("http://localhost:8082/api/books/" + id);
+    await axios.delete(server + "/api/books/" + id);
 
     this.getBooks();
   }
@@ -70,7 +74,7 @@ class App extends Component {
   }
 
   formSubmitHandler = async (values) => {
-    await axios.post("http://localhost:8082/api/books", values);
+    await axios.post(server + "/api/books", values);
 
     this.getBooks();
   }
@@ -108,7 +112,7 @@ class App extends Component {
   }
 
   submitUpdateHandler = async (id, values) => {
-    await axios.put("http://localhost:8082/api/books/" + id, values);
+    await axios.put(server + "/api/books/" + id, values);
     await this.getBooks()
     this.updateEditHandler(null);
     this.getBooks();
