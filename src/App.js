@@ -70,8 +70,7 @@ class App extends Component {
   }
 
   formSubmitHandler = async (values) => {
-    console.log(values)
-    const response = await axios.post("http://localhost:8082/api/books", values);
+    await axios.post("http://localhost:8082/api/books", values);
 
     this.getBooks();
   }
@@ -94,7 +93,6 @@ class App extends Component {
 
   formChangeHandler(field, value) {
     const newInputs = { ...this.state.inputs };
-    console.log(newInputs);
     newInputs[field].value = value;
 
     this.setState({ inputs: { ...newInputs }});
@@ -110,7 +108,7 @@ class App extends Component {
   }
 
   submitUpdateHandler = async (id, values) => {
-    const response = await axios.put("http://localhost:8082/api/books/" + id, values);
+    await axios.put("http://localhost:8082/api/books/" + id, values);
     await this.getBooks()
     this.updateEditHandler(null);
     this.getBooks();

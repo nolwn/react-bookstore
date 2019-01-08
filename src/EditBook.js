@@ -4,8 +4,6 @@ class EditBook extends Component {
   constructor({ id, inputs, formChangeHandler, submitUpdateHandler, updateEditHandler }) {
     super({ id, inputs, formChangeHandler, submitUpdateHandler, updateEditHandler });
 
-    console.log(inputs)
-
     this.formChangeHandler = formChangeHandler;
     this.updateEditHandler = updateEditHandler;
     this.submitUpdateHandler = submitUpdateHandler;
